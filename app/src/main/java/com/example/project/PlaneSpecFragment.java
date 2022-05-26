@@ -1,6 +1,9 @@
 package com.example.project;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
@@ -21,11 +24,6 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 
 import java.util.Objects;
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link PlaneSpecFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class PlaneSpecFragment extends Fragment {
 
     public PlaneSpecFragment() {
@@ -50,16 +48,22 @@ public class PlaneSpecFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Bundle bundle = this.getArguments();
-        assert bundle != null;
-        String name = bundle.getString("name");
-        String description = bundle.getString("description");
-        int crew = bundle.getInt("crew");
-        int planeLength = bundle.getInt("planeLength");
-        int enginesAmount = bundle.getInt("enginesAmount");
-        float wingSize = bundle.getFloat("wingSize");
-        float wingSize1 = bundle.getFloat("wingSize1");
-        String image_src = bundle.getString("image_src");
+        final Bundle[] bundle = {this.getArguments()};
+        assert bundle[0] != null;
+        String link = bundle[0].getString("video_link");
+        final Intent[] intent = {new Intent(Intent.ACTION_VIEW, Uri.parse(link))};
+        String code = link.substring((link.lastIndexOf("=")+1));
+        Log.d("code", code);
+        final Intent[] appIntent = {new Intent(Intent.ACTION_VIEW,
+                Uri.parse("vnd.youtube:"+code))};
+        final String[] name = {bundle[0].getString("name")};
+        String description = bundle[0].getString("description");
+        int crew = bundle[0].getInt("crew");
+        int planeLength = bundle[0].getInt("planeLength");
+        int enginesAmount = bundle[0].getInt("enginesAmount");
+        float wingSize = bundle[0].getFloat("wingSize");
+        float wingSize1 = bundle[0].getFloat("wingSize1");
+        String image_src = bundle[0].getString("image_src");
         View view = inflater.inflate(R.layout.fragment_plane_spec, container, false);
         TextView planeName = view.findViewById(R.id.plane_name);
         TextView planeDescription = view.findViewById(R.id.description_plane);
@@ -75,8 +79,19 @@ public class PlaneSpecFragment extends Fragment {
         plane_planeLength.setText("length: "+String.valueOf(planeLength));
         plane_wingSize.setText("wing's size: "+String.valueOf(wingSize));
         plane_wingSize1.setText("wing's size too lol: "+String.valueOf(wingSize1));
-        planeName.setText(name);
+        planeName.setText(name[0]);
         Glide.with(getContext()).load(image_src).into(planeImg);
+        planeImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    startActivity(appIntent[0]);
+                } catch (ActivityNotFoundException e) {
+                    startActivity(intent[0]);
+                }
+
+            }
+        });
         Log.d("imageDebug", image_src);
         return view;
     }

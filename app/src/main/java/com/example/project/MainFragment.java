@@ -92,6 +92,7 @@ class PlaneAdapter extends RecyclerView.Adapter<PlaneAdapter.ViewHolder> {
         b.putFloat("wingSize", p.getWingSize());
         b.putFloat("wingSize1", p.getWingSize1());
         b.putString("image_src", p.getImage_src());
+        b.putString("video_link", p.getVideo_link());
         a.setArguments(b);
         holder.layout.setOnClickListener(new View.OnClickListener() {
             @Override
